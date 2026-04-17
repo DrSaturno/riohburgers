@@ -50,9 +50,16 @@
                 </ul>
             </nav>
             <div class="actions">
+                <button class="user-btn" id="user-btn" onclick="handleUserBtnClick()">
+                    <i data-lucide="user"></i>
+                    <span id="user-btn-label">INGRESAR</span>
+                </button>
                 <button class="cart-btn" onclick="toggleCartModal()">
-                    <i data-lucide="shopping-cart"></i>
-                    <span>CARRITO (<span id="cart-qty">0</span>)</span>
+                    <span class="cart-icon-wrap">
+                        <i data-lucide="shopping-cart"></i>
+                        <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+                    </span>
+                    <span class="cart-label">CARRITO (<span id="cart-qty">0</span>)</span>
                 </button>
             </div>
         </div>
@@ -153,6 +160,12 @@
                             </div>
                         </div>
 
+                        <div class="modal-cart-pill" id="modal-cart-pill" style="display:none">
+                            <i data-lucide="shopping-cart"></i>
+                            <span>CARRITO</span>
+                            <strong id="modal-cart-total">$0</strong>
+                        </div>
+
                         <div class="modal-footer">
                             <div class="qty-selector">
                                 <button onclick="changeQty(-1)"><i data-lucide="minus"></i></button>
@@ -174,6 +187,10 @@
                     <span class="upsell-tag">ANTES DE CONTINUAR</span>
                     <h2>¿SUMÁS UNOS NUGGETS?</h2>
                     <p>Completá tu pedido con algo más</p>
+                    <div class="upsell-running-total">
+                        <span>Tu pedido hasta ahora:</span>
+                        <strong id="upsell-cart-total">$0</strong>
+                    </div>
                 </div>
                 <div class="upsell-nuggets-grid" id="upsell-nuggets-grid">
                     <!-- Injected by main.js -->
@@ -183,6 +200,70 @@
                 </button>
             </div>
         </div>
+
+        <!-- Auth Modal -->
+        <div id="auth-modal" class="modal-overlay">
+            <div class="modal-content auth-content">
+                <button class="close-modal" onclick="closeAuthModal()"><i data-lucide="x"></i></button>
+                <div class="auth-logo">RIOH.</div>
+                <p class="auth-subtitle" id="auth-subtitle">Tu cuenta para pedir más rápido</p>
+
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">INGRESAR</button>
+                    <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">REGISTRARSE</button>
+                </div>
+
+                <!-- Login -->
+                <div id="auth-panel-login" class="auth-panel">
+                    <div class="input-group">
+                        <label>EMAIL</label>
+                        <input type="email" id="login-email" placeholder="tu@email.com">
+                    </div>
+                    <div class="input-group">
+                        <label>CONTRASEÑA</label>
+                        <input type="password" id="login-pass" placeholder="••••••••">
+                    </div>
+                    <div id="auth-error-login" class="auth-msg"></div>
+                    <button class="auth-submit-btn" onclick="doLogin()">INGRESAR</button>
+                    <button class="auth-link-btn" onclick="doForgotPassword()">¿Olvidaste tu contraseña?</button>
+                </div>
+
+                <!-- Register -->
+                <div id="auth-panel-register" class="auth-panel" style="display:none">
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>NOMBRE</label>
+                            <input type="text" id="reg-nombre" placeholder="Tu nombre">
+                        </div>
+                        <div class="input-group">
+                            <label>WHATSAPP</label>
+                            <input type="tel" id="reg-whatsapp" placeholder="11 1234 5678">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>EMAIL</label>
+                        <input type="email" id="reg-email" placeholder="tu@email.com">
+                    </div>
+                    <div class="input-group">
+                        <label>CONTRASEÑA</label>
+                        <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <div id="auth-error-register" class="auth-msg"></div>
+                    <button class="auth-submit-btn" onclick="doRegister()">CREAR CUENTA</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAB: Ver menú -->
+        <button id="fab-menu" class="fab-menu" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">
+            <i data-lucide="utensils"></i>
+            <span>ORDENAR</span>
+        </button>
+
+        <!-- Scroll to top -->
+        <button id="scroll-top-btn" class="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+            <i data-lucide="arrow-up"></i>
+        </button>
 
         <!-- Float Cart Bar -->
         <div id="order-bar" class="order-bar">

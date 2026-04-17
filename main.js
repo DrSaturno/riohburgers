@@ -42,6 +42,8 @@ setTimeout(dismissLoader, 1000);
 const SUPABASE_URL = 'https://xjoyrjzvdfwavnvnfnvt.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhqb3lyanp2ZGZ3YXZudm5mbnZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4NzIxMDYsImV4cCI6MjA4NjQ0ODEwNn0.Uw0MwDvBPtRjyMCt2ZA-kMYvVmIhUPXPP52AJo4a14Y';
 let supabaseClient = null;
+let currentUser = null;
+let pendingAfterAuth = null;
 
 function initSupabase() {
     if (typeof window.supabase !== 'undefined') {
@@ -95,10 +97,12 @@ function getStoreStatus() {
 document.addEventListener('DOMContentLoaded', () => {
     initSupabase();
     initListeners();
+    initAuth();
     if (typeof lucide !== 'undefined') lucide.createIcons();
     loadMenu();
     loadActivePromos();
     fetchMasterStatus();
+    initScrollButtons();
 
     // Initial status check
     const status = getStoreStatus();
@@ -204,6 +208,221 @@ async function loadActivePromos() {
         activePromos = data;
         console.log("Promos activas cargadas:", activePromos.length);
     } catch (e) { console.error("Error loading promos:", e); }
+}
+
+// =============================================
+// AUTH ENGINE
+// =============================================
+async function initAuth() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) { currentUser = session.user; await onAuthSuccess(session.user, false); }
+
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+            currentUser = session.user;
+            await onAuthSuccess(session.user, true);
+        } else if (event === 'SIGNED_OUT') {
+            currentUser = null;
+            updateAuthUI(null);
+        }
+    });
+}
+
+async function onAuthSuccess(user, fromLogin) {
+    updateAuthUI(user);
+
+    let { data: cliente } = await supabaseClient.from('clientes').select('*').eq('user_id', user.id).maybeSingle();
+
+    if (!cliente) {
+        let { data: byEmail } = await supabaseClient.from('clientes').select('*').eq('email', user.email).maybeSingle();
+        if (byEmail) {
+            await supabaseClient.from('clientes').update({ user_id: user.id }).eq('id', byEmail.id);
+            cliente = byEmail;
+        }
+    }
+
+    if (cliente) {
+        const fill = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+        fill('cust-name', cliente.nombre);
+        fill('cust-phone', cliente.whatsapp);
+        fill('cust-email', cliente.email);
+        fill('cust-address', cliente.direccion);
+    }
+
+    if (fromLogin) {
+        closeAuthModal();
+        if (pendingAfterAuth === 'checkout') {
+            pendingAfterAuth = null;
+            openCheckoutModal();
+        }
+    }
+}
+
+function updateAuthUI(user) {
+    const btn = document.getElementById('user-btn');
+    const label = document.getElementById('user-btn-label');
+    if (!btn || !label) return;
+    if (user) {
+        const name = (user.user_metadata?.nombre || user.email.split('@')[0]).toUpperCase().split(' ')[0];
+        label.textContent = `HOLA, ${name}`;
+        btn.classList.add('logged-in');
+    } else {
+        label.textContent = 'INGRESAR';
+        btn.classList.remove('logged-in');
+    }
+}
+
+window.handleUserBtnClick = () => {
+    if (currentUser) {
+        if (confirm('¿Cerrar sesión?')) supabaseClient.auth.signOut();
+    } else {
+        openAuthModal();
+    }
+};
+
+window.openAuthModal = (fromCheckout = false) => {
+    if (fromCheckout) {
+        pendingAfterAuth = 'checkout';
+        const sub = document.getElementById('auth-subtitle');
+        if (sub) sub.textContent = 'Iniciá sesión para completar tu pedido';
+    }
+    const modal = document.getElementById('auth-modal');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('active'), 10);
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+};
+
+window.closeAuthModal = () => {
+    const modal = document.getElementById('auth-modal');
+    modal.classList.remove('active');
+    setTimeout(() => { modal.style.display = 'none'; }, 350);
+    pendingAfterAuth = null;
+};
+
+window.switchAuthTab = (tab) => {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.getElementById('auth-panel-login').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('auth-panel-register').style.display = tab === 'register' ? 'block' : 'none';
+};
+
+function setAuthError(elId, msg, isSuccess = false) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    el.textContent = msg;
+    el.style.color = isSuccess ? '#4CAF50' : '#CC1E27';
+}
+
+function translateAuthError(error) {
+    const msg = error.message || '';
+    if (msg.includes('Invalid login credentials')) return 'Email o contraseña incorrectos.';
+    if (msg.includes('Email not confirmed')) return 'Confirmá tu email antes de ingresar.';
+    if (msg.includes('signups are disabled') || msg.includes('Signups not allowed')) return 'El registro está temporalmente desactivado. Contactá al administrador.';
+    if (msg.includes('already been registered') || msg.includes('already registered')) return 'Ya existe una cuenta con ese email. Usá "Ingresar".';
+    if (msg.includes('User already registered')) return 'Ya existe una cuenta con ese email. Usá "Ingresar".';
+    if (msg.includes('only request this after')) {
+        const sec = msg.match(/after (\d+) second/);
+        return sec ? `Demasiados intentos. Esperá ${sec[1]} segundos e intentá de nuevo.` : 'Demasiados intentos. Esperá un momento.';
+    }
+    if (msg.includes('Password should be')) return 'La contraseña debe tener al menos 6 caracteres.';
+    return msg;
+}
+
+function validateEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+function validatePhone(phone) { return phone.replace(/\D/g, '').length >= 8; }
+
+window.doLogin = async () => {
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    setAuthError('auth-error-login', '');
+    if (!email) { setAuthError('auth-error-login', 'Ingresá tu email.'); return; }
+    if (!validateEmail(email)) { setAuthError('auth-error-login', 'El email no es válido.'); return; }
+    if (!pass) { setAuthError('auth-error-login', 'Ingresá tu contraseña.'); return; }
+    const btn = document.querySelector('#auth-panel-login .auth-submit-btn');
+    btn.textContent = 'INGRESANDO...'; btn.disabled = true;
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+    btn.textContent = 'INGRESAR'; btn.disabled = false;
+    if (error) setAuthError('auth-error-login', translateAuthError(error));
+};
+
+window.doRegister = async () => {
+    const nombre = document.getElementById('reg-nombre').value.trim();
+    const whatsapp = document.getElementById('reg-whatsapp').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pass = document.getElementById('reg-pass').value;
+    setAuthError('auth-error-register', '');
+
+    if (!nombre) { setAuthError('auth-error-register', 'Ingresá tu nombre.'); return; }
+    if (!whatsapp) { setAuthError('auth-error-register', 'Ingresá tu WhatsApp.'); return; }
+    if (!validatePhone(whatsapp)) { setAuthError('auth-error-register', 'El WhatsApp debe tener al menos 8 dígitos.'); return; }
+    if (!email) { setAuthError('auth-error-register', 'Ingresá tu email.'); return; }
+    if (!validateEmail(email)) { setAuthError('auth-error-register', 'El email no es válido.'); return; }
+    if (!pass) { setAuthError('auth-error-register', 'Ingresá una contraseña.'); return; }
+    if (pass.length < 6) { setAuthError('auth-error-register', 'La contraseña debe tener al menos 6 caracteres.'); return; }
+
+    const btn = document.querySelector('#auth-panel-register .auth-submit-btn');
+    btn.textContent = 'VERIFICANDO...'; btn.disabled = true;
+
+    const { data: byPhone } = await supabaseClient.from('clientes').select('id').eq('whatsapp', whatsapp).maybeSingle();
+    if (byPhone) {
+        setAuthError('auth-error-register', 'Ese WhatsApp ya está registrado. Usá "Ingresar".');
+        btn.textContent = 'CREAR CUENTA'; btn.disabled = false;
+        return;
+    }
+    const { data: byEmail } = await supabaseClient.from('clientes').select('id').eq('email', email).maybeSingle();
+    if (byEmail) {
+        setAuthError('auth-error-register', 'Ese email ya está registrado. Usá "Ingresar".');
+        btn.textContent = 'CREAR CUENTA'; btn.disabled = false;
+        return;
+    }
+
+    btn.textContent = 'CREANDO CUENTA...';
+    const { data, error } = await supabaseClient.auth.signUp({ email, password: pass, options: { data: { nombre } } });
+    btn.textContent = 'CREAR CUENTA'; btn.disabled = false;
+
+    if (error) { setAuthError('auth-error-register', translateAuthError(error)); return; }
+
+    if (data.user) {
+        const { data: existing } = await supabaseClient.from('clientes').select('id').eq('email', email).maybeSingle();
+        if (existing) {
+            await supabaseClient.from('clientes').update({ user_id: data.user.id, nombre, whatsapp }).eq('id', existing.id);
+        } else {
+            await supabaseClient.from('clientes').insert({ user_id: data.user.id, nombre, whatsapp, email, pedidos_count: 0, total_gastado: 0 });
+        }
+    }
+};
+
+window.doForgotPassword = async () => {
+    const email = document.getElementById('login-email').value.trim();
+    const errEl = document.getElementById('auth-error-login');
+    if (!email) { setAuthError('auth-error-login', 'Ingresá tu email primero.'); return; }
+    if (!validateEmail(email)) { setAuthError('auth-error-login', 'El email no es válido.'); return; }
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+    if (error) { setAuthError('auth-error-login', translateAuthError(error)); return; }
+    setAuthError('auth-error-login', 'Te enviamos un email para restablecer tu contraseña.', true);
+};
+
+async function updateClienteStats(orderTotal) {
+    if (!currentUser) return;
+    const { data: cliente } = await supabaseClient.from('clientes').select('id, pedidos_count, total_gastado').eq('user_id', currentUser.id).maybeSingle();
+    if (cliente) {
+        await supabaseClient.from('clientes').update({
+            pedidos_count: (cliente.pedidos_count || 0) + 1,
+            total_gastado: (cliente.total_gastado || 0) + orderTotal,
+            ultima_compra: new Date().toISOString()
+        }).eq('id', cliente.id);
+    }
+}
+
+function initScrollButtons() {
+    const fab = document.getElementById('fab-menu');
+    const scrollTop = document.getElementById('scroll-top-btn');
+    const heroHeight = () => document.querySelector('.hero')?.offsetHeight || 400;
+
+    window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY > heroHeight();
+        if (fab) fab.classList.toggle('fab-visible', scrolled && cart.length === 0);
+        if (scrollTop) scrollTop.classList.toggle('fab-visible', window.scrollY > 600);
+    }, { passive: true });
 }
 
 // 6. RENDER LOGIC
@@ -427,6 +646,22 @@ function updateOrderBar() {
     const headerQty = document.getElementById('cart-qty');
     if (headerQty) headerQty.innerText = totalQty;
 
+    const badge = document.getElementById('cart-badge');
+    if (badge) {
+        if (totalQty > 0) { badge.textContent = totalQty; badge.style.display = 'flex'; }
+        else badge.style.display = 'none';
+    }
+
+    const formatted = `$${subtotal.toLocaleString()}`;
+    const modalPill = document.getElementById('modal-cart-pill');
+    const modalTotal = document.getElementById('modal-cart-total');
+    if (modalPill && modalTotal) {
+        if (totalQty > 0) { modalPill.style.display = 'flex'; modalTotal.textContent = formatted; }
+        else modalPill.style.display = 'none';
+    }
+    const upsellTotal = document.getElementById('upsell-cart-total');
+    if (upsellTotal) upsellTotal.textContent = formatted;
+
     const bar = document.getElementById('order-bar');
     if (bar) {
         if (cart.length > 0) {
@@ -435,6 +670,9 @@ function updateOrderBar() {
             document.getElementById('bar-total-price').innerText = `$${subtotal.toLocaleString()}`;
         } else bar.classList.remove('active');
     }
+
+    const fab = document.getElementById('fab-menu');
+    if (fab) fab.style.display = totalQty > 0 ? 'none' : '';
 }
 
 window.toggleCartModal = function () {
@@ -614,6 +852,7 @@ function calculateCartMarketing() {
 
 window.openCheckoutModal = function () {
     if (cart.length === 0) return;
+    if (!currentUser) { openAuthModal(true); return; }
     updateCheckoutPrices();
     const modal = document.getElementById('checkout-modal');
     modal.style.display = 'flex';
@@ -763,6 +1002,7 @@ if (checkoutForm) {
             // 2. Insert Order
             const { data: oData, error: oErr } = await supabaseClient.from('pedidos').insert({
                 cliente_id: clientId,
+                user_id: currentUser ? currentUser.id : null,
                 items: cart,
                 metodo_entrega: currentDeliveryMethod,
                 direccion_entrega: currentDeliveryMethod === 'delivery' ? document.getElementById('cust-address').value : 'Retiro en Local',
@@ -783,6 +1023,7 @@ if (checkoutForm) {
             }
             await supabaseClient.rpc('descontar_stock_pedido', { p_pedido_id: oData[0].id });
 
+            await updateClienteStats(total);
             showAlert("PEDIDO RECIBIDO", `¡Pedido #${oData[0].numero_pedido} recibido! ¡Muchas gracias por elegirnos!`);
             cart = []; appliedCoupon = null;
             updateOrderBar(); closeCheckoutModal();
