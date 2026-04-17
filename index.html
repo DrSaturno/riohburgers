@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIOH. BURGERS | FAST FOOD PREMIUM</title>
+    <meta name="description" content="Hamburguesas reales en Saavedra. Rioh Burgers: Sabor artesanal, vibra retro.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Outfit:wght@400;700;900&family=Syne:wght@800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Mercado Pago SDK -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+</head>
+
+<body>
+    <div id="loader">
+        <div class="loader-logo">RIOH.</div>
+    </div>
+
+    <!-- Script de emergencia para el loader -->
+    <script>
+        (function () {
+            var l = document.getElementById('loader');
+            function hide() { if (l) { l.style.opacity = '0'; setTimeout(function () { l.style.display = 'none'; }, 500); } }
+            window.addEventListener('load', hide);
+            setTimeout(hide, 1200); // 1.2s timeout
+        })();
+    </script>
+
+    <div class="marquee-container">
+        <div class="marquee-content">
+            ⚡ ENVÍO GRATIS • 🍟 TODAS LAS HAMBURGUESAS VAN CON PAPAS • ⚡ ENVÍO GRATIS • 🍟 TODAS LAS HAMBURGUESAS VAN
+            CON PAPAS • ⚡ ENVÍO GRATIS • 🍟 TODAS LAS HAMBURGUESAS VAN CON PAPAS •
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="logo-box">RIOH.</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#menu">Menu</a></li>
+                </ul>
+            </nav>
+            <div class="actions">
+                <button class="cart-btn" onclick="toggleCartModal()">
+                    <i data-lucide="shopping-cart"></i>
+                    <span>CARRITO (<span id="cart-qty">0</span>)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-grid">
+                    <div class="hero-content reveal">
+                        <div class="hero-tag">BEST IN SAAVEDRA</div>
+                        <h1>NO<br>BULLSHIT,<br><span class="outline-text">JUST<br>BURGERS.</span></h1>
+                        <p>Hamburguesas hechas por y para la gente que sabe lo que quiere. Carne real, pan real, vibra
+                            real.</p>
+                        <a href="#menu" class="btn-hero">ORDENAR AHORA</a>
+                    </div>
+                    <div class="hero-img-container reveal-right">
+                        <img src="burger1.png" class="hero-standalone-img" alt="Rioh Burger Standalone">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="marquee-container border-top reverse">
+            <div class="marquee-content">
+                ⚡ ENVÍO GRATIS • 🍟 TODAS LAS HAMBURGUESAS VAN CON PAPAS • ⚡ ENVÍO GRATIS • 🍟 TODAS LAS HAMBURGUESAS
+                VAN
+                CON PAPAS • ⚡ ENVÍO GRATIS • 🍟 TODAS LAS HAMBURGUESAS VAN CON PAPAS •
+            </div>
+        </div>
+
+        <!-- PARA ACOMPAÑAR Section -->
+        <section id="extras" class="extras-section reveal">
+            <div class="container">
+                <div class="extras-header">
+                    <span class="extras-new-badge">NUEVO</span>
+                    <h2>PARA ACOMPAÑAR</h2>
+                    <p>Sumale algo más a tu pedido</p>
+                </div>
+                <div class="extras-grid" id="extras-grid">
+                    <!-- Injected by main.js -->
+                </div>
+            </div>
+        </section>
+
+        <section id="menu" class="menu-section reveal">
+            <div class="container">
+                <div class="dip-notice reveal">
+                    <p>Todas las hamburguesas incluyen</p>
+                    <h4>UN DIP CON SAZONADOR</h4>
+                </div>
+
+                <div class="menu-grid" id="menu-grid">
+                    <!-- Regular burgers injected by main.js -->
+                </div>
+
+                <div id="featured-burger">
+                    <!-- Malbec Rioh featured card injected by main.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Detail Modal (McDonald's Style) -->
+        <div id="product-modal" class="modal-overlay">
+            <div class="modal-content">
+                <button class="close-modal"><i data-lucide="x"></i></button>
+                <div class="modal-body-grid">
+                    <div class="modal-img-side">
+                        <img id="modal-img" src="" alt="">
+                    </div>
+                    <div class="modal-info-side">
+                        <h2 id="modal-title"></h2>
+                        <p id="modal-desc"></p>
+
+                        <div class="custom-section">
+                            <h4>TAMAÑO</h4>
+                            <div class="price-options-modal">
+                                <button class="modal-pill active" data-type="Simple">SIMPLE</button>
+                                <button class="modal-pill" data-type="Doble">DOBLE</button>
+                            </div>
+                        </div>
+
+                        <div class="custom-section">
+                            <h4>EXTRAS</h4>
+                            <div class="extras-list">
+                                <label class="extra-item">
+                                    <input type="checkbox" data-name="Medallón Extra" data-price="1500">
+                                    <span>Medallón Extra (+$1.500)</span>
+                                </label>
+                                <label class="extra-item">
+                                    <input type="checkbox" data-name="Extra Cheddar" data-price="1500">
+                                    <span>Extra Cheddar (+$1.500)</span>
+                                </label>
+                                <label class="extra-item">
+                                    <input type="checkbox" data-name="Extra Bacon" data-price="1500">
+                                    <span>Extra Bacon (+$1.500)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <div class="qty-selector">
+                                <button onclick="changeQty(-1)"><i data-lucide="minus"></i></button>
+                                <span id="modal-qty">1</span>
+                                <button onclick="changeQty(1)"><i data-lucide="plus"></i></button>
+                            </div>
+                            <button id="add-to-cart-big" class="cart-btn">AGREGAR POR <span
+                                    id="modal-total-price"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upsell Modal: Nuggets -->
+        <div id="upsell-modal" class="modal-overlay">
+            <div class="modal-content upsell-content">
+                <div class="upsell-header">
+                    <span class="upsell-tag">ANTES DE CONTINUAR</span>
+                    <h2>¿SUMÁS UNOS NUGGETS?</h2>
+                    <p>Completá tu pedido con algo más</p>
+                </div>
+                <div class="upsell-nuggets-grid" id="upsell-nuggets-grid">
+                    <!-- Injected by main.js -->
+                </div>
+                <button class="upsell-skip-btn" onclick="closeUpsellAndCheckout()">
+                    NO GRACIAS, CONTINUAR AL PAGO <i data-lucide="arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Float Cart Bar -->
+        <div id="order-bar" class="order-bar">
+            <div class="container bar-flex">
+                <div class="bar-info" onclick="toggleCartModal()" style="cursor: pointer;">
+                    <span id="bar-items-count">0 ITEMS</span>
+                    <span class="bar-total" id="bar-total-price">$0</span>
+                </div>
+                <button class="cart-btn" onclick="openCheckoutModal()">CONTINUAR PEDIDO <i
+                        data-lucide="chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Checkout Form Modal -->
+        <div id="checkout-modal" class="modal-overlay">
+            <div class="modal-content checkout-content">
+                <button class="close-modal" onclick="closeCheckoutModal()"><i data-lucide="x"></i></button>
+                <div class="checkout-body">
+                    <h2>FINALIZAR PEDIDO</h2>
+                    <p>Completa tus datos para confirmar la compra.</p>
+
+                    <form id="checkout-form" class="brutalist-form">
+                        <div class="checkout-grid-container">
+                            <div class="checkout-form-side">
+                                <div class="form-row">
+                                    <div class="input-group">
+                                        <label>NOMBRE COMPLETO</label>
+                                        <input type="text" id="cust-name" required placeholder="Tu nombre">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>WHATSAPP / TELEFONO</label>
+                                        <input type="tel" id="cust-phone" required placeholder="Ej: 11 1234 5678">
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>EMAIL</label>
+                                    <input type="email" id="cust-email" required placeholder="tu@email.com">
+                                </div>
+
+                                <div class="delivery-toggle-group">
+                                    <label>MÉTODO DE ENTREGA</label>
+                                    <div class="method-pills">
+                                        <button type="button" class="method-pill active"
+                                            data-method="delivery">DELIVERY</button>
+                                        <button type="button" class="method-pill" data-method="pickup">RETIRO POR
+                                            LOCAL</button>
+                                    </div>
+                                </div>
+
+                                <div id="address-section">
+                                    <div class="input-group">
+                                        <label>DIRECCIÓN DE ENTREGA</label>
+                                        <input type="text" id="cust-address" placeholder="Calle, altura, depto...">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>ZONA / ENVÍO</label>
+                                        <select id="shipping-zone" onchange="updateCheckoutPrices()">
+                                            <option value="0">SAAVEDRA ($0)</option>
+                                            <option value="0">NUÑEZ ($0)</option>
+                                            <option value="0">BELGRANO ($0)</option>
+                                            <option value="0">VILLA URQUIZA ($0)</option>
+                                            <option value="0">FLORIDA ($0)</option>
+                                            <option value="0">V. MARTELLI ($0)</option>
+                                            <option value="0">VICENTE LOPEZ ($0)</option>
+                                        </select>
+                                    </div>
+                                    <button type="button" class="text-link" onclick="openCoverageModal()"
+                                        style="background:none; border:none; color:var(--primary); font-family:var(--font-heading); font-size:0.7rem; cursor:pointer; text-decoration:underline; margin-top:5px;">
+                                        VER MAPA DE COBERTURA
+                                    </button>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>NOTAS ADICIONALES</label>
+                                    <textarea id="cust-notes"
+                                        placeholder="Timbres, aclaraciones de cocina..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="checkout-summary-side">
+                                <div class="order-summary-box">
+                                    <h4>TU PEDIDO</h4>
+                                    <div class="summary-line"><span>SUBTOTAL</span> <span
+                                            id="summary-subtotal">$0</span></div>
+
+                                    <div class="coupon-group">
+                                        <div class="input-group">
+                                            <input type="text" id="coupon-input" placeholder="CUPÓN">
+                                            <button type="button" onclick="applyCoupon()"
+                                                id="apply-coupon-btn">APLICAR</button>
+                                        </div>
+                                        <div id="coupon-message" class="coupon-msg"></div>
+                                    </div>
+
+                                    <div class="summary-line discount" id="discount-row"
+                                        style="display:none; color: var(--primary);">
+                                        <span>DESCUENTO</span> <span id="summary-discount">-$0</span>
+                                    </div>
+
+                                    <div class="summary-line"><span>ENVÍO</span> <span id="summary-shipping">$0</span>
+                                    </div>
+                                    <div class="summary-line total"><span>TOTAL</span> <span
+                                            id="summary-total">$0</span></div>
+                                </div>
+
+                                <button type="submit" class="pay-btn" id="pay-button">
+                                    MERCADO PAGO
+                                    <img src="mp.png" alt="Mercado Pago" class="mp-btn-logo">
+                                </button>
+                                <p class="secure-text"><i data-lucide="shield-check"></i> Pago 100% seguro procesado por
+                                    Mercado Pago</p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Modal -->
+        <div id="cart-modal" class="modal-overlay">
+            <div class="cart-modal-content">
+                <div class="cart-header">
+                    <h2>MI PEDIDO</h2>
+                    <button class="close-modal" onclick="toggleCartModal()"><i data-lucide="x"></i></button>
+                </div>
+                <div id="cart-items-list" class="cart-items-list">
+                    <!-- Cart items injected here -->
+                    <div class="empty-cart-msg">
+                        <i data-lucide="shopping-bag" size="48"></i>
+                        <p>Tu carrito está vacío</p>
+                        <button class="btn-hero" onclick="toggleCartModal()">VOLVER AL MENÚ</button>
+                    </div>
+                </div>
+                <div class="cart-footer">
+                    <!-- Upsell Section -->
+                    <div class="cart-upsell">
+                        <h4>¿TE QUEDASTE CON HAMBRE?</h4>
+                        <div id="upsell-items" class="upsell-grid">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <div class="cart-total-line">
+                        <span>TOTAL</span>
+                        <span id="cart-final-total">$0</span>
+                    </div>
+                    <button class="checkout-now-btn" onclick="openCheckoutModal(); toggleCartModal();">
+                        INICIAR COMPRA <i data-lucide="arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <section id="ig" class="ig-section reveal">
+            <div class="container">
+                <div class="ig-header">
+                    <h2>FOLLOW THE VIBE</h2>
+                    <p><a href="https://www.instagram.com/rioh.burgers/" target="_blank">@rioh.burgers</a></p>
+                </div>
+                <div class="ig-banner">
+                    <div class="ig-banner-content">
+                        <div class="ig-logo-big">
+                            <i data-lucide="instagram"></i>
+                        </div>
+                        <h3>SEGUÍ EL FLOW</h3>
+                        <p>Enterate de todos nuestros ingresos, combos y sorteos antes que nadie.</p>
+                        <a href="https://www.instagram.com/rioh.burgers/" target="_blank"
+                            class="ig-cta-btn">@RIOH.BURGERS</a>
+                    </div>
+        </section>
+
+        <footer id="contacto" class="reveal">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-left">
+                        <div class="footer-logo">RIOH.</div>
+                        <p>Elevando el estándar de la comida rápida. 100% Carne vacuna premium.</p>
+                    </div>
+                    <div class="footer-info-col">
+                        <h4>HORARIOS</h4>
+                        <p>JUEVES<br>18:00 a 00:00</p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 RIOH. BURGERS. DESIGNED FOR DRSATURNO.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Coverage Map Modal -->
+        <div id="coverage-modal" class="modal-overlay">
+            <div class="modal-content" style="max-width: 600px;">
+                <button class="close-modal" onclick="closeCoverageModal()"><i data-lucide="x"></i></button>
+                <div style="padding: 2.5rem; text-align: center;">
+                    <h2 style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 2rem;">ZONAS DE
+                        COBERTURA</h2>
+                    <div
+                        style="border: var(--border-width) solid var(--text-dark); background: #eee; height: 350px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 10px 10px 0px var(--text-dark);">
+                        <!-- Placeholder for a stylized map -->
+                        <div
+                            style="position: absolute; inset: 0; background: url('https://upload.wikimedia.org/wikipedia/commons/e/e0/Placeholder_map.png'); background-size: cover; opacity: 0.3; filter: grayscale(1);">
+                        </div>
+                        <div class="coverage-circle"
+                            style="width: 150px; height: 150px; border: 4px dashed var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(204, 30, 39, 0.1); position: relative; z-index: 2;">
+                            <div
+                                style="font-family: var(--font-heading); color: var(--primary); font-size: 1.2rem; transform: rotate(-5deg);">
+                                RIOH AREA</div>
+                        </div>
+                    </div>
+                    <ul
+                        style="list-style: none; margin-top: 2rem; text-align: left; font-weight: 700; font-size: 0.9rem;">
+                        <li style="margin-bottom: 5px;"><span style="color: var(--primary);">●</span> SAAVEDRA, NUÑEZ,
+                            BELGRANO: Envío Sin Cargo</li>
+                        <li style="margin-bottom: 5px;"><span style="color: var(--primary);">●</span> V. URQUIZA,
+                            FLORIDA: Envío Sin Cargo</li>
+                        <li style="margin-bottom: 5px;"><span style="color: var(--primary);">●</span> MARTELLI, VICENTE
+                            LOPEZ: Envío Sin Cargo</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Alert Modal (Store Closed/Info) -->
+        <div id="alert-modal" class="modal-overlay">
+            <div class="alert-modal-content">
+                <h2 id="alert-title">AVISO</h2>
+                <p id="alert-message">Mensaje de prueba</p>
+                <button class="btn-alert" onclick="closeAlertModal()">ENTENDIDO</button>
+            </div>
+        </div>
+
+        <script src="main.js"></script>
+</body>
+
+</html>
