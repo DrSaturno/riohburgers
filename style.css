@@ -2442,21 +2442,14 @@ footer {
     min-height: 0;
 }
 
-.checkout-content .checkout-form-side h2 {
+.checkout-content .checkout-body > h2 {
     font-size: 1.5rem;
     margin-bottom: 0.1rem;
 }
 
-.checkout-content .checkout-form-side > p {
+.checkout-content .checkout-body > p {
     font-size: 0.8rem;
     margin-bottom: 0.6rem;
-}
-
-.checkout-content .checkout-body > form {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
 }
 
 .checkout-content .checkout-grid-container {
@@ -2470,8 +2463,7 @@ footer {
 .checkout-content .checkout-form-side {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    gap: 0;
+    justify-content: space-between;
 }
 
 /* Columna derecha: crece y usa toda la altura */
