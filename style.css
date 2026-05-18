@@ -288,6 +288,20 @@ header .container {
     overflow: visible;
 }
 
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(180, 10, 10, 0.55);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero .container {
+    position: relative;
+    z-index: 1;
+}
+
 .hero-grid {
     display: grid;
     grid-template-columns: 50% 50%;
