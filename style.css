@@ -1963,7 +1963,7 @@ footer {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(204, 30, 39, 0.72);
+    background: rgba(204, 30, 39, 0.35);
     z-index: 0;
 }
 
