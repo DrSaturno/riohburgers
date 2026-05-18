@@ -2839,3 +2839,25 @@ footer {
 .added-toast i { width: 16px; height: 16px; color: #4ade80; flex-shrink: 0; }
 .added-toast .toast-name { color: #FFD600; }
 .added-toast .toast-sub { color: #ccc; font-family: var(--font-body); font-size: 0.8rem; }
+
+/* MOBILE BACKGROUND IMAGES */
+@media (max-width: 868px) {
+    .hero {
+        background-image: url('vertical001.jpg');
+        background-size: cover;
+        background-position: center center;
+        min-height: 100svh;
+    }
+
+    .menu-section {
+        background-image: url('vertical002.jpg');
+        background-size: 100% 100%;
+        padding: 12rem 0 4rem;
+    }
+
+    .extras-section {
+        background-image: url('vertical003.jpg');
+        background-size: 100% 100%;
+        padding: 12rem 0 4rem;
+    }
+}
