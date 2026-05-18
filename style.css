@@ -53,7 +53,8 @@ body {
 .marquee-content {
     display: inline-block;
     animation: marquee 25s linear infinite;
-    font-weight: 900;
+    font-family: 'Monument Extended', sans-serif;
+    font-weight: 800;
     font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -477,9 +478,10 @@ header .container {
     display: inline-block;
     background: var(--primary);
     color: white;
-    font-family: var(--font-heading);
+    font-family: 'Monument Extended', sans-serif;
+    text-transform: uppercase;
     font-size: 0.7rem;
-    font-weight: 900;
+    font-weight: 800;
     padding: 5px 14px;
     border: 2px solid var(--primary);
     letter-spacing: 0.1em;
@@ -487,17 +489,20 @@ header .container {
 }
 
 .menu-item-featured h3 {
-    font-family: var(--font-heading);
+    font-family: 'Monument Extended', sans-serif;
     font-size: clamp(1.8rem, 3vw, 2.6rem);
     color: white;
     margin: 0;
     line-height: 1;
     text-transform: uppercase;
+    font-weight: 800;
 }
 
 .featured-desc {
     color: rgba(255,255,255,0.65);
-    font-family: var(--font-body);
+    font-family: 'Monument Extended', sans-serif;
+    text-transform: uppercase;
+    font-weight: 800;
     font-size: 0.95rem;
     margin: 0;
     line-height: 1.5;
@@ -510,10 +515,11 @@ header .container {
 }
 
 .featured-pricing span {
-    font-family: var(--font-heading);
+    font-family: 'Monument Extended', sans-serif;
     font-size: 1.1rem;
     color: #FFD600;
-    font-weight: 900;
+    text-transform: uppercase;
+    font-weight: 800;
 }
 
 .add-btn-featured {
@@ -521,9 +527,10 @@ header .container {
     color: white;
     border: var(--border-width) solid var(--primary);
     padding: 14px 28px;
-    font-family: var(--font-heading);
+    font-family: 'Monument Extended', sans-serif;
+    text-transform: uppercase;
     font-size: 0.9rem;
-    font-weight: 900;
+    font-weight: 800;
     cursor: pointer;
     box-shadow: 4px 4px 0 white;
     transition: var(--transition);
@@ -584,8 +591,8 @@ header .container {
 }
 
 .dip-notice p {
-    font-family: var(--font-body);
-    font-weight: 700;
+    font-family: 'Monument Extended', sans-serif;
+    font-weight: 800;
     font-size: 1rem;
     color: var(--text-dark);
     margin: 0;
@@ -593,12 +600,14 @@ header .container {
 }
 
 .dip-notice h4 {
-    font-family: var(--font-heading);
+    font-family: 'Monument Extended', sans-serif;
+    font-weight: 800;
     font-size: 1.8rem;
     color: var(--primary);
     -webkit-text-stroke: 1px var(--text-dark);
     letter-spacing: 2px;
     margin-top: 5px;
+    text-transform: uppercase;
 }
 
 .item-img {
