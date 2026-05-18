@@ -41,29 +41,20 @@
         </div>
     </div>
 
-    <header>
-        <div class="container">
-            <img src="logo-1.png" alt="RIOH." class="header-logo">
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="#menu">Menu</a></li>
-                </ul>
-            </nav>
-            <div class="actions">
-                <button class="user-btn" id="user-btn" onclick="handleUserBtnClick()">
-                    <i data-lucide="user"></i>
-                    <span id="user-btn-label">INGRESAR</span>
-                </button>
-                <button class="cart-btn" onclick="toggleCartModal()">
-                    <span class="cart-icon-wrap">
-                        <i data-lucide="shopping-cart"></i>
-                        <span class="cart-badge" id="cart-badge" style="display:none">0</span>
-                    </span>
-                    <span class="cart-label">CARRITO (<span id="cart-qty">0</span>)</span>
-                </button>
-            </div>
-        </div>
-    </header>
+    <!-- Floating action buttons -->
+    <div class="floating-actions">
+        <button class="user-btn" id="user-btn" onclick="handleUserBtnClick()">
+            <i data-lucide="user"></i>
+            <span id="user-btn-label">INGRESAR</span>
+        </button>
+        <button class="cart-btn" onclick="toggleCartModal()">
+            <span class="cart-icon-wrap">
+                <i data-lucide="shopping-cart"></i>
+                <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+            </span>
+            <span class="cart-label">CARRITO (<span id="cart-qty">0</span>)</span>
+        </button>
+    </div>
 
     <main>
         <section class="hero">
