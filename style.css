@@ -90,18 +90,11 @@ header .container {
     align-items: center;
 }
 
-.logo-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.logo-text {
-    font-family: var(--font-heading);
-    font-size: 1.8rem;
-    color: var(--primary);
-    text-transform: uppercase;
-    line-height: 1;
+.header-logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+    cursor: pointer;
 }
 
 .nav-links {
