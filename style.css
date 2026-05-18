@@ -281,25 +281,21 @@ header .container {
 .auth-link-btn:hover { color: var(--primary); }
 
 .hero {
-    padding: 10rem 0 15rem;
+    padding: 0;
     background: url('fondo01.jpg') center center / cover no-repeat;
     border-bottom: var(--border-width) solid var(--text-dark);
     position: relative;
     overflow: visible;
+    display: flex;
+    align-items: flex-end;
+    min-height: 75vh;
 }
 
-.hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(180, 10, 10, 0.55);
-    z-index: 0;
-    pointer-events: none;
-}
-
-.hero .container {
-    position: relative;
-    z-index: 1;
+.hero-cta-only {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 4rem;
 }
 
 .hero-grid {
