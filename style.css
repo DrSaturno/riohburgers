@@ -400,11 +400,9 @@ header .container {
 
 /* MENU SECTION */
 .menu-section {
-    padding: 6rem 0;
-    background: url('fondo02.jpg') center top / 100% auto no-repeat;
-    background-color: #f0ebe5;
+    padding: 10rem 0 6rem;
+    background: url('fondo02.jpg') center top / cover no-repeat;
     position: relative;
-    padding-top: 22rem;
 }
 
 .menu-section::before {
