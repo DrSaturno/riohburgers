@@ -391,7 +391,7 @@ header .container {
 /* MENU SECTION */
 .menu-section {
     padding: 6rem 0;
-    background: url('fondo02.jpg') center center / cover no-repeat;
+    background: url('fondo02.jpg') center top / 100% auto no-repeat;
     position: relative;
 }
 
@@ -1944,7 +1944,7 @@ footer {
    ============================================= */
 .extras-section {
     padding: 4rem 0 5rem;
-    background: url('fondo03.jpg') center center / cover no-repeat;
+    background: url('fondo03.jpg') center top / 100% auto no-repeat;
     color: var(--text-dark);
     position: relative;
 }
