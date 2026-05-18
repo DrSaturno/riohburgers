@@ -420,10 +420,8 @@
             <div class="cart-modal-content">
                 <div class="cart-header">
                     <h2>MI PEDIDO</h2>
-                    <div style="display:flex; align-items:center; gap:1rem;">
-                        <button class="clear-cart-btn" onclick="clearCart()">VACIAR</button>
-                        <button class="close-modal" onclick="toggleCartModal()"><i data-lucide="x"></i></button>
-                    </div>
+                    <button class="clear-cart-btn" onclick="clearCart()" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);">VACIAR CARRITO</button>
+                    <button class="close-modal" onclick="toggleCartModal()"><i data-lucide="x"></i></button>
                 </div>
                 <div id="cart-items-list" class="cart-items-list">
                     <!-- Cart items injected here -->
