@@ -282,7 +282,7 @@ header .container {
 
 .hero {
     padding: 10rem 0 15rem;
-    background: url('rioh1.jpeg') center center / cover no-repeat;
+    background: url('fondo01.jpg') center center / cover no-repeat;
     border-bottom: var(--border-width) solid var(--text-dark);
     position: relative;
     overflow: visible;
@@ -391,6 +391,8 @@ header .container {
 /* MENU SECTION */
 .menu-section {
     padding: 6rem 0;
+    background: url('fondo02.jpg') center center / cover no-repeat;
+    background-attachment: local;
 }
 
 .filters-wrapper {
@@ -1929,7 +1931,7 @@ footer {
    ============================================= */
 .extras-section {
     padding: 4rem 0 5rem;
-    background: #FFD600;
+    background: url('fondo03.jpg') center center / cover no-repeat;
     color: var(--text-dark);
 }
 
