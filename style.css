@@ -402,14 +402,16 @@ header .container {
 .menu-section {
     padding: 6rem 0;
     background: url('fondo02.jpg') center top / 100% auto no-repeat;
+    background-color: #f0ebe5;
     position: relative;
+    padding-top: 22rem;
 }
 
 .menu-section::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.82);
+    background: rgba(255, 255, 255, 0.08);
     z-index: 0;
 }
 
