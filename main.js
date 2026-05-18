@@ -63,6 +63,7 @@ let currentProduct = null;
 let currentQty = 1;
 let currentType = "Simple";
 let currentDeliveryMethod = "delivery";
+let currentPaymentMethod = "mp";
 let isMasterOnline = true; // Manual override from Admin
 
 // 3.1 STORE HOURS LOGIC
@@ -760,6 +761,11 @@ function renderUpsell() {
     `).join('');
 }
 
+window.clearCart = () => {
+    if (!cart.length) return;
+    if (confirm('¿Vaciar el carrito?')) { cart = []; appliedCoupon = null; renderCartItems(); updateOrderBar(); }
+};
+
 window.removeFromCart = (idx) => { cart.splice(idx, 1); renderCartItems(); updateOrderBar(); };
 window.updateCartQty = (idx, chg) => {
     cart[idx].qty = Math.max(1, cart[idx].qty + chg);
@@ -830,6 +836,7 @@ function calculateCartMarketing() {
     } else {
         // Sin cupón: aplicar promos automáticas
         activePromos.forEach(p => {
+            if (p.solo_registrados && !currentUser) return; // promo exclusiva para registrados
             if (p.tipo === 'percent') discount += subtotal * (p.valor / 100);
             if (p.tipo === 'fixed') discount += p.valor;
             if (p.tipo === 'multi_buy') {
@@ -855,9 +862,18 @@ function calculateCartMarketing() {
     return { discount: Math.min(discount, subtotal), promoId: appliedPromoId };
 }
 
+window.selectPaymentMethod = function (method) {
+    currentPaymentMethod = method;
+    document.querySelectorAll('.payment-pill').forEach(p => p.classList.toggle('active', p.dataset.pay === method));
+    document.getElementById('pay-mp-block').style.display = method === 'mp' ? 'block' : 'none';
+    document.getElementById('pay-cash-block').style.display = method === 'cash' ? 'block' : 'none';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+};
+
 window.openCheckoutModal = function () {
     if (cart.length === 0) return;
-    if (!currentUser) { openAuthModal(true); return; }
+    const guestHint = document.getElementById('guest-hint-block');
+    if (guestHint) guestHint.style.display = currentUser ? 'none' : 'block';
     updateCheckoutPrices();
     const modal = document.getElementById('checkout-modal');
     modal.style.display = 'flex';
@@ -962,7 +978,8 @@ const checkoutForm = document.getElementById('checkout-form');
 if (checkoutForm) {
     checkoutForm.onsubmit = async (e) => {
         e.preventDefault();
-        const payBtn = document.getElementById('pay-button');
+        const isCash = currentPaymentMethod === 'cash';
+        const payBtn = isCash ? document.getElementById('pay-button-cash') : document.getElementById('pay-button');
         payBtn.disabled = true;
         payBtn.innerHTML = '<span class="loading-spinner"></span> PROCESANDO...';
 
@@ -1018,7 +1035,7 @@ if (checkoutForm) {
                 total,
                 promo_id: promoId,
                 cupon_id: appliedCoupon ? appliedCoupon.id : null,
-                estado_pago: 'pendiente'
+                estado_pago: isCash ? 'pendiente_efectivo' : 'pendiente'
             }).select();
             if (oErr) throw oErr;
 
@@ -1037,7 +1054,12 @@ if (checkoutForm) {
             showAlert("ERROR", "Hubo un problema al procesar tu pedido. Por favor, revisá los datos e intentá de nuevo.");
         } finally {
             payBtn.disabled = false;
-            payBtn.innerHTML = 'MERCADO PAGO <img src="mp.png" alt="MP" class="mp-btn-logo">';
+            if (isCash) {
+                payBtn.innerHTML = '<i data-lucide="check-circle"></i> CONFIRMAR PEDIDO';
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            } else {
+                payBtn.innerHTML = 'MERCADO PAGO <img src="mp.png" alt="MP" class="mp-btn-logo">';
+            }
         }
     };
 }

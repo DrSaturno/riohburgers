@@ -36,8 +36,8 @@ body {
 
 /* MARQUEE - Red & White Retro Vibe */
 .marquee-container {
-    background: var(--primary);
-    color: white;
+    background: #FFD600;
+    color: var(--text-dark);
     padding: 12px 0;
     overflow: hidden;
     white-space: nowrap;
@@ -2316,4 +2316,126 @@ footer {
 .summary-line.discount {
     font-weight: 900;
     margin-bottom: 10px;
+}
+
+/* PAYMENT METHOD SELECTOR */
+.payment-method-group {
+    margin-bottom: 1rem;
+}
+
+.payment-method-group label {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+}
+
+.payment-pills {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.payment-pill {
+    flex: 1;
+    padding: 10px 8px;
+    border: var(--border-width) solid var(--text-dark);
+    background: white;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+    box-shadow: 3px 3px 0 var(--text-dark);
+}
+
+.payment-pill.active {
+    background: var(--text-dark);
+    color: white;
+}
+
+.cash-info-box {
+    background: #FFFAE5;
+    border: var(--border-width) solid var(--text-dark);
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    box-shadow: 4px 4px 0 var(--text-dark);
+}
+
+.cash-info-box p {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.cash-alias {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--primary);
+    letter-spacing: 0.05em;
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.pay-btn-cash {
+    width: 100%;
+    background: #28a745;
+    color: white;
+    padding: 1.2rem;
+    border: var(--border-width) solid var(--text-dark);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 6px 6px 0px var(--text-dark);
+    transition: var(--transition);
+    text-transform: uppercase;
+    font-weight: 900;
+}
+
+.pay-btn-cash:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 10px 10px 0px var(--text-dark);
+    background: #218838;
+}
+
+/* CLEAR CART BUTTON */
+.clear-cart-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-family: var(--font-heading);
+    font-size: 0.7rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.clear-cart-btn:hover {
+    color: var(--primary);
+}
+
+/* GUEST CHECKOUT HINT */
+.guest-hint {
+    font-size: 0.78rem;
+    color: #888;
+    text-align: center;
+    margin-top: 0.75rem;
+}
+
+.guest-hint button {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
 }

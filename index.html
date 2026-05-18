@@ -370,12 +370,40 @@
                                             id="summary-total">$0</span></div>
                                 </div>
 
-                                <button type="submit" class="pay-btn" id="pay-button">
-                                    MERCADO PAGO
-                                    <img src="mp.png" alt="Mercado Pago" class="mp-btn-logo">
-                                </button>
-                                <p class="secure-text"><i data-lucide="shield-check"></i> Pago 100% seguro procesado por
-                                    Mercado Pago</p>
+                                <div class="payment-method-group">
+                                    <label>MÉTODO DE PAGO</label>
+                                    <div class="payment-pills">
+                                        <button type="button" class="payment-pill active" data-pay="mp" onclick="selectPaymentMethod('mp')">
+                                            💳 MERCADO PAGO
+                                        </button>
+                                        <button type="button" class="payment-pill" data-pay="cash" onclick="selectPaymentMethod('cash')">
+                                            💵 EFECTIVO / TRANSFERENCIA
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="pay-mp-block">
+                                    <button type="submit" class="pay-btn" id="pay-button">
+                                        MERCADO PAGO
+                                        <img src="mp.png" alt="Mercado Pago" class="mp-btn-logo">
+                                    </button>
+                                    <p class="secure-text"><i data-lucide="shield-check"></i> Pago 100% seguro procesado por Mercado Pago</p>
+                                </div>
+
+                                <div id="pay-cash-block" style="display:none">
+                                    <div class="cash-info-box">
+                                        <p>Realizá la transferencia o pagá en efectivo al recibir. Alias para transferir:</p>
+                                        <span class="cash-alias">RIOH.BURGERS</span>
+                                    </div>
+                                    <button type="submit" class="pay-btn-cash" id="pay-button-cash">
+                                        <i data-lucide="check-circle"></i> CONFIRMAR PEDIDO
+                                    </button>
+                                </div>
+
+                                <div class="guest-hint" id="guest-hint-block">
+                                    ¿Querés guardar tus datos para la próxima?
+                                    <button type="button" onclick="openAuthModal()">Creá tu cuenta</button>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -388,7 +416,10 @@
             <div class="cart-modal-content">
                 <div class="cart-header">
                     <h2>MI PEDIDO</h2>
-                    <button class="close-modal" onclick="toggleCartModal()"><i data-lucide="x"></i></button>
+                    <div style="display:flex; align-items:center; gap:1rem;">
+                        <button class="clear-cart-btn" onclick="clearCart()">VACIAR</button>
+                        <button class="close-modal" onclick="toggleCartModal()"><i data-lucide="x"></i></button>
+                    </div>
                 </div>
                 <div id="cart-items-list" class="cart-items-list">
                     <!-- Cart items injected here -->
