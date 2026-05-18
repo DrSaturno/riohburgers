@@ -91,10 +91,12 @@ header .container {
 }
 
 .header-logo {
-    height: 90px;
+    height: 120px;
     width: auto;
     object-fit: contain;
     cursor: pointer;
+    transform: scale(1.4);
+    margin: -15px 0;
 }
 
 .nav-links {
