@@ -287,11 +287,10 @@ header .container {
 
 .hero {
     padding: 10rem 0 15rem;
-    background: var(--bg-white);
+    background: url('rioh1.jpeg') center center / cover no-repeat;
     border-bottom: var(--border-width) solid var(--text-dark);
     position: relative;
     overflow: visible;
-    /* CRITICAL: Allow images to breathe */
 }
 
 .hero-grid {
