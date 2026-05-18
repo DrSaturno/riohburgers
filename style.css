@@ -1953,7 +1953,7 @@ footer {
    PARA ACOMPAÑAR SECTION
    ============================================= */
 .extras-section {
-    padding: 4rem 0 5rem;
+    padding: 14rem 0 5rem;
     background: url('fondo03.jpg') center top / 100% 100% no-repeat;
     color: var(--text-dark);
     position: relative;
