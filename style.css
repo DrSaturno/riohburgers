@@ -2425,12 +2425,20 @@ footer {
 }
 
 /* =============================================
-   CHECKOUT COMPACT — sin scroll
+   CHECKOUT — layout restructurado
    ============================================= */
-.checkout-content { max-height: 96vh; }
+.checkout-content {
+    max-height: 96vh;
+    display: flex;
+    flex-direction: column;
+}
 
 .checkout-content .checkout-body {
     padding: 1rem 1.5rem 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .checkout-content .checkout-body h2 {
@@ -2444,7 +2452,44 @@ footer {
 }
 
 .checkout-content .checkout-grid-container {
-    gap: 1.25rem;
+    gap: 1.5rem;
+    align-items: stretch;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.checkout-content .checkout-form-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Columna derecha: crece y usa toda la altura */
+.checkout-content .checkout-summary-side {
+    position: static;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* El recuadro del pedido se estira para llenar el espacio */
+.checkout-content .order-summary-box {
+    padding: 1rem;
+    margin-bottom: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* La lista de items crece dentro del recuadro */
+.checkout-content .checkout-items-list {
+    flex: 1;
+    min-height: 40px;
+    max-height: none;
+    overflow-y: auto;
 }
 
 .checkout-content .input-group {
@@ -2472,11 +2517,6 @@ footer {
     font-size: 0.78rem;
 }
 
-.checkout-content .order-summary-box {
-    padding: 0.85rem;
-    margin-bottom: 0.6rem;
-}
-
 .checkout-content .coupon-group {
     margin: 0.55rem 0;
     padding: 0.65rem;
@@ -2488,9 +2528,16 @@ footer {
 }
 
 .checkout-content .summary-line.total {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     padding-top: 0.5rem;
     margin-top: 0.5rem;
+}
+
+/* Sección de pago: pegada al fondo de la columna derecha */
+.pay-method-section {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: var(--border-width) solid var(--text-dark);
 }
 
 /* CHECKOUT ITEMS LIST */
