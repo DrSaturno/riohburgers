@@ -67,30 +67,7 @@ let isMasterOnline = true; // Manual override from Admin
 
 // 3.1 STORE HOURS LOGIC
 function getStoreStatus() {
-    const now = new Date();
-    const day = now.getDay(); // 0-6 (0 is Sunday, 4 is Thursday)
-    const hour = now.getHours();
-
-    // The store is open if:
-    // A) The Master Switch is ON (Manual/Forced Open)
-    // B) It is Thursday and it's between 18:00 and 00:00 (Automatic Schedule)
-    const isScheduledTime = (day === 4 && hour >= 18);
-    const isOpen = isMasterOnline || isScheduledTime;
-
-    if (isOpen) {
-        return { open: true };
-    } else {
-        let msg = "";
-        if (day === 4 && hour < 18) {
-            msg = "a partir de las 18:00 hs";
-        } else {
-            msg = "el próximo JUEVES a las 18:00 hs";
-        }
-        return {
-            open: false,
-            nextOpening: msg
-        };
-    }
+    return { open: true };
 }
 
 // 4. INITIALIZATION
@@ -112,6 +89,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchMasterStatus() {
+    // Demo mode override: skip Supabase check
+    if (localStorage.getItem('rioh_demo') === '1') {
+        isMasterOnline = true;
+        showDemoBanner();
+        return;
+    }
+
+    // Check localStorage fallback (set by admin panel when Supabase write fails)
+    const localOverride = localStorage.getItem('rioh_master_online');
+    if (localOverride !== null) {
+        isMasterOnline = localOverride === '1';
+    }
+
     if (!supabaseClient) return;
     try {
         const { data } = await supabaseClient.from('configuracion').select('valor').eq('id', 'ventas_web').maybeSingle();
@@ -119,10 +109,25 @@ async function fetchMasterStatus() {
             const newValue = data.valor.online;
             if (isMasterOnline !== newValue) {
                 isMasterOnline = newValue;
-                renderMenu(menuData); // Force refresh menu buttons
+                renderMenu(menuData);
             }
         }
     } catch (e) { console.error("Error fetching master status:", e); }
+}
+
+function showDemoBanner() {
+    if (document.getElementById('demo-banner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'demo-banner';
+    banner.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+        background: #FFD600; color: #111; text-align: center;
+        padding: 6px; font-family: 'Archivo Black', sans-serif;
+        font-size: 0.75rem; border-bottom: 2px solid #111;
+        letter-spacing: 0.08em;
+    `;
+    banner.textContent = '⚡ MODO DEMO ACTIVO — para desactivarlo, usá el panel de admin';
+    document.body.prepend(banner);
 }
 
 // 5. DATA LOADING
@@ -801,34 +806,11 @@ function calculateCartMarketing() {
     let discount = 0;
     let appliedPromoId = null;
 
-    // A. Automatic Promos (Only one for simplicity, or cumulative)
-    activePromos.forEach(p => {
-        if (p.tipo === 'percent') discount += subtotal * (p.valor / 100);
-        if (p.tipo === 'fixed') discount += p.valor;
-        if (p.tipo === 'multi_buy') {
-            cart.forEach(item => {
-                if (item.qty >= p.buy_qty) {
-                    let sets = Math.floor(item.qty / p.buy_qty);
-                    discount += (p.buy_qty - p.get_qty) * item.pricePerUnit * sets;
-                }
-            });
-        }
-        if (p.tipo === 'second_unit') {
-            cart.forEach(item => {
-                if (item.qty >= 2) {
-                    let pairs = Math.floor(item.qty / 2);
-                    discount += (item.pricePerUnit * (p.second_unit_percent / 100)) * pairs;
-                }
-            });
-        }
-        if (discount > 0) appliedPromoId = p.id;
-    });
-
-    // B. Applied Coupon
+    // Cupón y promos no son acumulables: si hay cupón activo, se ignoran las promos automáticas
     if (appliedCoupon) {
         let c = appliedCoupon;
-        if (c.tipo === 'percent') discount += subtotal * (c.valor / 100);
-        if (c.tipo === 'fixed') discount += c.valor;
+        if (c.tipo === 'percent') discount = subtotal * (c.valor / 100);
+        if (c.tipo === 'fixed') discount = c.valor;
         if (c.tipo === 'multi_buy') {
             cart.forEach(item => {
                 if (item.qty >= c.buy_qty) {
@@ -845,6 +827,29 @@ function calculateCartMarketing() {
                 }
             });
         }
+    } else {
+        // Sin cupón: aplicar promos automáticas
+        activePromos.forEach(p => {
+            if (p.tipo === 'percent') discount += subtotal * (p.valor / 100);
+            if (p.tipo === 'fixed') discount += p.valor;
+            if (p.tipo === 'multi_buy') {
+                cart.forEach(item => {
+                    if (item.qty >= p.buy_qty) {
+                        let sets = Math.floor(item.qty / p.buy_qty);
+                        discount += (p.buy_qty - p.get_qty) * item.pricePerUnit * sets;
+                    }
+                });
+            }
+            if (p.tipo === 'second_unit') {
+                cart.forEach(item => {
+                    if (item.qty >= 2) {
+                        let pairs = Math.floor(item.qty / 2);
+                        discount += (item.pricePerUnit * (p.second_unit_percent / 100)) * pairs;
+                    }
+                });
+            }
+            if (discount > 0) appliedPromoId = p.id;
+        });
     }
 
     return { discount: Math.min(discount, subtotal), promoId: appliedPromoId };
