@@ -956,6 +956,21 @@ window.openCheckoutModal = function () {
 };
 
 window.updateCheckoutPrices = function () {
+    const itemsList = document.getElementById('checkout-items-list');
+    if (itemsList) {
+        itemsList.innerHTML = cart.map(item => {
+            const detail = [item.type, ...(item.extras || [])].filter(Boolean).join(' + ');
+            return `
+            <div class="checkout-item-row">
+                <div class="checkout-item-name">
+                    <span class="checkout-item-qty">${item.qty}×</span>
+                    <span>${item.title}${detail ? `<br><small>${detail}</small>` : ''}</span>
+                </div>
+                <span class="checkout-item-price">$${item.total.toLocaleString()}</span>
+            </div>`;
+        }).join('');
+    }
+
     let subtotal = cart.reduce((acc, i) => acc + i.total, 0);
     let { discount, promoId } = calculateCartMarketing();
 
