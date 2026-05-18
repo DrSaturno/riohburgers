@@ -65,6 +65,7 @@ let currentType = "Simple";
 let currentDeliveryMethod = "delivery";
 let isMasterOnline = true;
 let upsellQtys = {};
+let selectedPayMethod = null;
 
 // 3.1 STORE HOURS LOGIC
 function getStoreStatus() {
@@ -911,14 +912,47 @@ function calculateCartMarketing() {
     return { discount: Math.min(discount, subtotal), promoId: appliedPromoId };
 }
 
+window.selectPay = function(method) {
+    selectedPayMethod = method;
+    document.querySelectorAll('.pay-select-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(`select-${method}`).classList.add('active');
+    const aliasBox = document.getElementById('alias-box');
+    if (aliasBox) aliasBox.style.display = method === 'transferencia' ? 'block' : 'none';
+    const finalizarBtn = document.getElementById('finalizar-btn');
+    if (finalizarBtn) finalizarBtn.style.display = 'flex';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+};
+
+window.copyAlias = function() {
+    navigator.clipboard.writeText('RIOH.BURGERS').then(() => {
+        const btn = document.querySelector('.copy-alias-btn');
+        if (!btn) return;
+        btn.innerHTML = '✓';
+        btn.style.background = '#28a745';
+        setTimeout(() => {
+            btn.innerHTML = '<i data-lucide="copy"></i>';
+            btn.style.background = '';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }, 1800);
+    });
+};
+
 window.openCheckoutModal = function () {
     if (cart.length === 0) return;
+    // Reset payment selection
+    selectedPayMethod = null;
+    document.querySelectorAll('.pay-select-btn').forEach(b => b.classList.remove('active'));
+    const aliasBox = document.getElementById('alias-box');
+    if (aliasBox) aliasBox.style.display = 'none';
+    const finalizarBtn = document.getElementById('finalizar-btn');
+    if (finalizarBtn) finalizarBtn.style.display = 'none';
     const guestHint = document.getElementById('guest-hint-block');
     if (guestHint) guestHint.style.display = currentUser ? 'none' : 'block';
     updateCheckoutPrices();
     const modal = document.getElementById('checkout-modal');
     modal.style.display = 'flex';
     setTimeout(() => modal.classList.add('active'), 10);
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 };
 
 window.updateCheckoutPrices = function () {
@@ -1015,15 +1049,14 @@ document.querySelectorAll('.method-pill').forEach(pill => {
 });
 
 // Final Checkout
-window.submitOrder = async function(payMethod) {
+window.submitOrder = async function() {
+    if (!selectedPayMethod) return;
     const form = document.getElementById('checkout-form');
     if (form && !form.checkValidity()) { form.reportValidity(); return; }
 
-    const btnEfectivo = document.getElementById('pay-btn-efectivo');
-    const btnTransferencia = document.getElementById('pay-btn-transferencia');
-    [btnEfectivo, btnTransferencia].forEach(b => { if (b) { b.disabled = true; } });
-    const activeBtn = payMethod === 'efectivo' ? btnEfectivo : btnTransferencia;
-    if (activeBtn) activeBtn.innerHTML = '<span class="loading-spinner"></span> PROCESANDO...';
+    const finalizarBtn = document.getElementById('finalizar-btn');
+    if (finalizarBtn) { finalizarBtn.disabled = true; finalizarBtn.innerHTML = '<span class="loading-spinner"></span> PROCESANDO...'; }
+    const payMethod = selectedPayMethod;
 
         try {
             let subtotal = cart.reduce((acc, i) => acc + i.total, 0);
@@ -1095,7 +1128,6 @@ window.submitOrder = async function(payMethod) {
             console.error(err);
             showAlert("ERROR", "Hubo un problema al procesar tu pedido. Por favor, revisá los datos e intentá de nuevo.");
         } finally {
-            if (btnEfectivo) { btnEfectivo.disabled = false; btnEfectivo.innerHTML = '💵 PAGO EN EFECTIVO'; }
-            if (btnTransferencia) { btnTransferencia.disabled = false; btnTransferencia.innerHTML = '🔄 TRANSFERENCIA'; }
+            if (finalizarBtn) { finalizarBtn.disabled = false; finalizarBtn.innerHTML = '<i data-lucide="check-circle"></i> FINALIZAR PEDIDO'; if (typeof lucide !== 'undefined') lucide.createIcons(); }
         }
 };

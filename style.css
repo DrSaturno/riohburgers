@@ -2430,6 +2430,172 @@ footer {
     color: var(--primary);
 }
 
+/* =============================================
+   CHECKOUT COMPACT — sin scroll
+   ============================================= */
+.checkout-content { max-height: 96vh; }
+
+.checkout-content .checkout-body {
+    padding: 1rem 1.5rem 1.25rem;
+}
+
+.checkout-content .checkout-body h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.1rem;
+}
+
+.checkout-content .checkout-body > p {
+    font-size: 0.8rem;
+    margin-bottom: 0.6rem;
+}
+
+.checkout-content .checkout-grid-container {
+    gap: 1.25rem;
+}
+
+.checkout-content .input-group {
+    margin-bottom: 0.55rem;
+}
+
+.checkout-content .input-group label {
+    font-size: 0.7rem;
+    margin-bottom: 2px;
+}
+
+.checkout-content .input-group input,
+.checkout-content .input-group select,
+.checkout-content .input-group textarea {
+    padding: 7px 10px;
+    font-size: 0.88rem;
+}
+
+.checkout-content .delivery-toggle-group {
+    margin: 0.55rem 0;
+}
+
+.checkout-content .method-pill {
+    padding: 7px;
+    font-size: 0.78rem;
+}
+
+.checkout-content .order-summary-box {
+    padding: 0.85rem;
+    margin-bottom: 0.6rem;
+}
+
+.checkout-content .coupon-group {
+    margin: 0.55rem 0;
+    padding: 0.65rem;
+}
+
+.checkout-content .summary-line {
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+
+.checkout-content .summary-line.total {
+    font-size: 1.05rem;
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+/* PAYMENT SELECTION */
+.pay-method-label {
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    font-weight: 900;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.pay-select-btn {
+    flex: 1;
+    padding: 9px 6px;
+    border: var(--border-width) solid var(--text-dark);
+    background: white;
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 3px 3px 0 var(--text-dark);
+    text-transform: uppercase;
+}
+
+.pay-select-btn.active.efectivo {
+    background: #28a745;
+    color: white;
+    border-color: #1e7e34;
+}
+
+.pay-select-btn.active.transferencia {
+    background: var(--text-dark);
+    color: white;
+}
+
+.alias-compact {
+    padding: 0.65rem 0.85rem !important;
+    margin-top: 0.65rem;
+}
+
+.alias-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 0.2rem;
+}
+
+.copy-alias-btn {
+    background: var(--text-dark);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+}
+
+.copy-alias-btn:hover { background: var(--primary); }
+.copy-alias-btn i { width: 15px; height: 15px; }
+
+.finalizar-btn {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    padding: 0.9rem;
+    border: var(--border-width) solid var(--text-dark);
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 var(--text-dark);
+    transition: var(--transition);
+    text-transform: uppercase;
+    margin-top: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.finalizar-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 var(--text-dark);
+}
+
+.finalizar-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+    box-shadow: none;
+    transform: none;
+}
+
 /* MODAL BACK BUTTON */
 .modal-back-btn {
     background: none;

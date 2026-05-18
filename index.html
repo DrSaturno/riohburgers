@@ -345,7 +345,7 @@
 
                                 <div class="input-group">
                                     <label>NOTAS ADICIONALES</label>
-                                    <textarea id="cust-notes"
+                                    <textarea id="cust-notes" rows="2"
                                         placeholder="Timbres, aclaraciones de cocina..."></textarea>
                                 </div>
                             </div>
@@ -376,22 +376,34 @@
                                             id="summary-total">$0</span></div>
                                 </div>
 
-                                <div class="cash-info-box">
-                                    <p>Para transferencias usá el alias:</p>
-                                    <span class="cash-alias">RIOH.BURGERS</span>
+                                <div class="pay-method-section">
+                                    <p class="pay-method-label">MÉTODO DE PAGO</p>
+                                    <div class="pay-dual-btns">
+                                        <button type="button" class="pay-select-btn efectivo" id="select-efectivo" onclick="selectPay('efectivo')">
+                                            💵 EFECTIVO
+                                        </button>
+                                        <button type="button" class="pay-select-btn transferencia" id="select-transferencia" onclick="selectPay('transferencia')">
+                                            🔄 TRANSFERENCIA
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div class="pay-dual-btns">
-                                    <button type="button" class="pay-btn-efectivo" id="pay-btn-efectivo" onclick="submitOrder('efectivo')">
-                                        💵 PAGO EN EFECTIVO
-                                    </button>
-                                    <button type="button" class="pay-btn-transferencia" id="pay-btn-transferencia" onclick="submitOrder('transferencia')">
-                                        🔄 TRANSFERENCIA
-                                    </button>
+                                <div id="alias-box" class="cash-info-box alias-compact" style="display:none">
+                                    <p>Alias para transferir:</p>
+                                    <div class="alias-row">
+                                        <span class="cash-alias">RIOH.BURGERS</span>
+                                        <button type="button" class="copy-alias-btn" onclick="copyAlias()" title="Copiar alias">
+                                            <i data-lucide="copy"></i>
+                                        </button>
+                                    </div>
                                 </div>
+
+                                <button type="button" class="finalizar-btn" id="finalizar-btn" style="display:none" onclick="submitOrder()">
+                                    <i data-lucide="check-circle"></i> FINALIZAR PEDIDO
+                                </button>
 
                                 <div class="guest-hint" id="guest-hint-block">
-                                    ¿Querés guardar tus datos para la próxima?
+                                    ¿Querés guardar tus datos?
                                     <button type="button" onclick="openAuthModal()">Creá tu cuenta</button>
                                 </div>
                             </div>
