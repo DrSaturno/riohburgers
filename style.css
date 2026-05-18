@@ -392,7 +392,20 @@ header .container {
 .menu-section {
     padding: 6rem 0;
     background: url('fondo02.jpg') center center / cover no-repeat;
-    background-attachment: local;
+    position: relative;
+}
+
+.menu-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.82);
+    z-index: 0;
+}
+
+.menu-section .container {
+    position: relative;
+    z-index: 1;
 }
 
 .filters-wrapper {
@@ -1933,6 +1946,20 @@ footer {
     padding: 4rem 0 5rem;
     background: url('fondo03.jpg') center center / cover no-repeat;
     color: var(--text-dark);
+    position: relative;
+}
+
+.extras-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(204, 30, 39, 0.72);
+    z-index: 0;
+}
+
+.extras-section .container {
+    position: relative;
+    z-index: 1;
 }
 
 .extras-header {
@@ -1957,13 +1984,13 @@ footer {
 .extras-header h2 {
     font-family: var(--font-heading);
     font-size: clamp(2.5rem, 6vw, 4rem);
-    color: var(--text-dark);
+    color: #fff;
     margin: 0.25rem 0;
     line-height: 1;
 }
 
 .extras-header p {
-    color: rgba(0,0,0,0.55);
+    color: rgba(255,255,255,0.8);
     font-size: 1rem;
     font-family: var(--font-body);
     margin-top: 0.5rem;
