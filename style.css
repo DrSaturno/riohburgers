@@ -2430,6 +2430,126 @@ footer {
     color: var(--primary);
 }
 
+/* MODAL BACK BUTTON */
+.modal-back-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    margin-bottom: 1.25rem;
+    transition: color 0.2s;
+    letter-spacing: 0.05em;
+}
+
+.modal-back-btn:hover { color: var(--text-dark); }
+.modal-back-btn i { width: 14px; height: 14px; }
+
+/* DUAL PAY BUTTONS */
+.pay-dual-btns {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.pay-btn-efectivo {
+    flex: 1;
+    background: #28a745;
+    color: white;
+    padding: 1rem 0.5rem;
+    border: var(--border-width) solid var(--text-dark);
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 var(--text-dark);
+    transition: var(--transition);
+    text-transform: uppercase;
+}
+
+.pay-btn-efectivo:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--text-dark);
+    background: #218838;
+}
+
+.pay-btn-transferencia {
+    flex: 1;
+    background: var(--text-dark);
+    color: white;
+    padding: 1rem 0.5rem;
+    border: var(--border-width) solid var(--text-dark);
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 var(--primary);
+    transition: var(--transition);
+    text-transform: uppercase;
+}
+
+.pay-btn-transferencia:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--primary);
+    background: #2a2a2a;
+}
+
+.pay-btn-efectivo:disabled,
+.pay-btn-transferencia:disabled {
+    opacity: 0.6;
+    cursor: default;
+    box-shadow: none;
+    transform: none;
+}
+
+/* UPSELL QTY CONTROLS */
+.upsell-nugget-action {
+    display: flex;
+    align-items: center;
+}
+
+.upsell-qty-btn {
+    width: 34px;
+    height: 34px;
+    background: white;
+    border: var(--border-width) solid var(--text-dark);
+    font-size: 1.1rem;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    box-shadow: 2px 2px 0 var(--text-dark);
+}
+
+.upsell-qty-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.upsell-qty-val {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 900;
+    min-width: 24px;
+    text-align: center;
+    color: var(--text-dark);
+}
+
+.upsell-skip-btn.has-selection {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 4px 4px 0 var(--text-dark);
+}
+
 /* GUEST CHECKOUT HINT */
 .guest-hint {
     font-size: 0.78rem;

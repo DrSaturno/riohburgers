@@ -63,8 +63,8 @@ let currentProduct = null;
 let currentQty = 1;
 let currentType = "Simple";
 let currentDeliveryMethod = "delivery";
-let currentPaymentMethod = "mp";
-let isMasterOnline = true; // Manual override from Admin
+let isMasterOnline = true;
+let upsellQtys = {};
 
 // 3.1 STORE HOURS LOGIC
 function getStoreStatus() {
@@ -587,15 +587,23 @@ function showUpsellModal() {
     const grid = document.getElementById('upsell-nuggets-grid');
     if (!grid || !nuggets.length) { openCheckoutModal(); return; }
 
+    upsellQtys = {};
     grid.innerHTML = nuggets.map(p => `
         <div class="upsell-nugget-card">
             <div class="upsell-nugget-info">
                 <h3>${p.title}</h3>
                 <p class="upsell-nugget-price">$${p.simple.toLocaleString()}</p>
             </div>
-            <button class="upsell-add-btn" id="upsell-btn-${p.id}" onclick="addNuggetFromUpsell('${p.id}')">
-                + AGREGAR
-            </button>
+            <div class="upsell-nugget-action">
+                <div id="upsell-zero-${p.id}">
+                    <button class="upsell-add-btn" onclick="changeNuggetQty('${p.id}', 1)">+ AGREGAR</button>
+                </div>
+                <div id="upsell-active-${p.id}" style="display:none; align-items:center; gap:10px;">
+                    <button class="upsell-qty-btn" onclick="changeNuggetQty('${p.id}', -1)">−</button>
+                    <span class="upsell-qty-val" id="upsell-qty-val-${p.id}">0</span>
+                    <button class="upsell-qty-btn" onclick="changeNuggetQty('${p.id}', 1)">+</button>
+                </div>
+            </div>
         </div>
     `).join('');
 
@@ -606,26 +614,67 @@ function showUpsellModal() {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-window.addNuggetFromUpsell = (productId) => {
-    const product = menuData.find(p => p.id === productId);
-    if (!product) return;
-    const existing = cart.find(i => i.product_id === productId && i.type === '');
-    if (existing) {
-        existing.qty += 1;
-        existing.total = existing.pricePerUnit * existing.qty;
+window.changeNuggetQty = (productId, delta) => {
+    const current = upsellQtys[productId] || 0;
+    const newQty = Math.max(0, current + delta);
+    upsellQtys[productId] = newQty;
+
+    const zeroEl = document.getElementById(`upsell-zero-${productId}`);
+    const activeEl = document.getElementById(`upsell-active-${productId}`);
+    const valEl = document.getElementById(`upsell-qty-val-${productId}`);
+
+    if (newQty === 0) {
+        if (zeroEl) zeroEl.style.display = 'block';
+        if (activeEl) activeEl.style.display = 'none';
     } else {
-        cart.push({ id: Date.now(), title: product.title, product_id: product.id, type: '', qty: 1, extras: [], pricePerUnit: product.simple, total: product.simple });
+        if (zeroEl) zeroEl.style.display = 'none';
+        if (activeEl) activeEl.style.display = 'flex';
+        if (valEl) valEl.textContent = newQty;
     }
-    updateOrderBar();
-    const btn = document.getElementById(`upsell-btn-${productId}`);
-    if (btn) { btn.textContent = '✓ AGREGADO'; btn.disabled = true; }
+
+    const hasSelection = Object.values(upsellQtys).some(q => q > 0);
+    const btn = document.getElementById('upsell-proceed-btn');
+    if (btn) {
+        btn.innerHTML = hasSelection
+            ? 'AGREGAR Y CONTINUAR AL PAGO <i data-lucide="arrow-right"></i>'
+            : 'NO GRACIAS, CONTINUAR AL PAGO <i data-lucide="arrow-right"></i>';
+        btn.classList.toggle('has-selection', hasSelection);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
 };
 
-window.closeUpsellAndCheckout = () => {
+window.proceedFromUpsell = () => {
+    Object.entries(upsellQtys).forEach(([productId, qty]) => {
+        if (qty <= 0) return;
+        const product = menuData.find(p => p.id === productId);
+        if (!product) return;
+        const existing = cart.find(i => i.product_id === productId && i.type === '');
+        if (existing) {
+            existing.qty += qty;
+            existing.total = existing.pricePerUnit * existing.qty;
+        } else {
+            cart.push({ id: Date.now(), title: product.title, product_id: product.id, type: '', qty, extras: [], pricePerUnit: product.simple, total: product.simple * qty });
+        }
+    });
+    upsellQtys = {};
+    updateOrderBar();
     const modal = document.getElementById('upsell-modal');
     modal.classList.remove('active');
     setTimeout(() => { modal.style.display = 'none'; }, 350);
     openCheckoutModal();
+};
+
+window.backFromUpsell = () => {
+    upsellQtys = {};
+    const modal = document.getElementById('upsell-modal');
+    modal.classList.remove('active');
+    setTimeout(() => { modal.style.display = 'none'; }, 350);
+    toggleCartModal();
+};
+
+window.backFromCheckout = () => {
+    closeCheckoutModal();
+    setTimeout(() => toggleCartModal(), 420);
 };
 
 window.changeQty = (val) => {
@@ -862,14 +911,6 @@ function calculateCartMarketing() {
     return { discount: Math.min(discount, subtotal), promoId: appliedPromoId };
 }
 
-window.selectPaymentMethod = function (method) {
-    currentPaymentMethod = method;
-    document.querySelectorAll('.payment-pill').forEach(p => p.classList.toggle('active', p.dataset.pay === method));
-    document.getElementById('pay-mp-block').style.display = method === 'mp' ? 'block' : 'none';
-    document.getElementById('pay-cash-block').style.display = method === 'cash' ? 'block' : 'none';
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-};
-
 window.openCheckoutModal = function () {
     if (cart.length === 0) return;
     const guestHint = document.getElementById('guest-hint-block');
@@ -974,14 +1015,15 @@ document.querySelectorAll('.method-pill').forEach(pill => {
 });
 
 // Final Checkout
-const checkoutForm = document.getElementById('checkout-form');
-if (checkoutForm) {
-    checkoutForm.onsubmit = async (e) => {
-        e.preventDefault();
-        const isCash = currentPaymentMethod === 'cash';
-        const payBtn = isCash ? document.getElementById('pay-button-cash') : document.getElementById('pay-button');
-        payBtn.disabled = true;
-        payBtn.innerHTML = '<span class="loading-spinner"></span> PROCESANDO...';
+window.submitOrder = async function(payMethod) {
+    const form = document.getElementById('checkout-form');
+    if (form && !form.checkValidity()) { form.reportValidity(); return; }
+
+    const btnEfectivo = document.getElementById('pay-btn-efectivo');
+    const btnTransferencia = document.getElementById('pay-btn-transferencia');
+    [btnEfectivo, btnTransferencia].forEach(b => { if (b) { b.disabled = true; } });
+    const activeBtn = payMethod === 'efectivo' ? btnEfectivo : btnTransferencia;
+    if (activeBtn) activeBtn.innerHTML = '<span class="loading-spinner"></span> PROCESANDO...';
 
         try {
             let subtotal = cart.reduce((acc, i) => acc + i.total, 0);
@@ -1035,7 +1077,7 @@ if (checkoutForm) {
                 total,
                 promo_id: promoId,
                 cupon_id: appliedCoupon ? appliedCoupon.id : null,
-                estado_pago: isCash ? 'pendiente_efectivo' : 'pendiente'
+                estado_pago: payMethod === 'efectivo' ? 'pendiente_efectivo' : 'pendiente_transferencia'
             }).select();
             if (oErr) throw oErr;
 
@@ -1053,13 +1095,7 @@ if (checkoutForm) {
             console.error(err);
             showAlert("ERROR", "Hubo un problema al procesar tu pedido. Por favor, revisá los datos e intentá de nuevo.");
         } finally {
-            payBtn.disabled = false;
-            if (isCash) {
-                payBtn.innerHTML = '<i data-lucide="check-circle"></i> CONFIRMAR PEDIDO';
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-            } else {
-                payBtn.innerHTML = 'MERCADO PAGO <img src="mp.png" alt="MP" class="mp-btn-logo">';
-            }
+            if (btnEfectivo) { btnEfectivo.disabled = false; btnEfectivo.innerHTML = '💵 PAGO EN EFECTIVO'; }
+            if (btnTransferencia) { btnTransferencia.disabled = false; btnTransferencia.innerHTML = '🔄 TRANSFERENCIA'; }
         }
-    };
-}
+};

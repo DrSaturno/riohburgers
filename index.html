@@ -183,6 +183,9 @@
         <!-- Upsell Modal: Nuggets -->
         <div id="upsell-modal" class="modal-overlay">
             <div class="modal-content upsell-content">
+                <button type="button" class="modal-back-btn" onclick="backFromUpsell()">
+                    <i data-lucide="arrow-left"></i> VOLVER AL CARRITO
+                </button>
                 <div class="upsell-header">
                     <span class="upsell-tag">ANTES DE CONTINUAR</span>
                     <h2>¿SUMÁS UNOS NUGGETS?</h2>
@@ -195,7 +198,7 @@
                 <div class="upsell-nuggets-grid" id="upsell-nuggets-grid">
                     <!-- Injected by main.js -->
                 </div>
-                <button class="upsell-skip-btn" onclick="closeUpsellAndCheckout()">
+                <button class="upsell-skip-btn" id="upsell-proceed-btn" onclick="proceedFromUpsell()">
                     NO GRACIAS, CONTINUAR AL PAGO <i data-lucide="arrow-right"></i>
                 </button>
             </div>
@@ -282,6 +285,9 @@
             <div class="modal-content checkout-content">
                 <button class="close-modal" onclick="closeCheckoutModal()"><i data-lucide="x"></i></button>
                 <div class="checkout-body">
+                    <button type="button" class="modal-back-btn" onclick="backFromCheckout()">
+                        <i data-lucide="arrow-left"></i> VOLVER AL CARRITO
+                    </button>
                     <h2>FINALIZAR PEDIDO</h2>
                     <p>Completa tus datos para confirmar la compra.</p>
 
@@ -370,33 +376,17 @@
                                             id="summary-total">$0</span></div>
                                 </div>
 
-                                <div class="payment-method-group">
-                                    <label>MÉTODO DE PAGO</label>
-                                    <div class="payment-pills">
-                                        <button type="button" class="payment-pill active" data-pay="mp" onclick="selectPaymentMethod('mp')">
-                                            💳 MERCADO PAGO
-                                        </button>
-                                        <button type="button" class="payment-pill" data-pay="cash" onclick="selectPaymentMethod('cash')">
-                                            💵 EFECTIVO / TRANSFERENCIA
-                                        </button>
-                                    </div>
+                                <div class="cash-info-box">
+                                    <p>Para transferencias usá el alias:</p>
+                                    <span class="cash-alias">RIOH.BURGERS</span>
                                 </div>
 
-                                <div id="pay-mp-block">
-                                    <button type="submit" class="pay-btn" id="pay-button">
-                                        MERCADO PAGO
-                                        <img src="mp.png" alt="Mercado Pago" class="mp-btn-logo">
+                                <div class="pay-dual-btns">
+                                    <button type="button" class="pay-btn-efectivo" id="pay-btn-efectivo" onclick="submitOrder('efectivo')">
+                                        💵 PAGO EN EFECTIVO
                                     </button>
-                                    <p class="secure-text"><i data-lucide="shield-check"></i> Pago 100% seguro procesado por Mercado Pago</p>
-                                </div>
-
-                                <div id="pay-cash-block" style="display:none">
-                                    <div class="cash-info-box">
-                                        <p>Realizá la transferencia o pagá en efectivo al recibir. Alias para transferir:</p>
-                                        <span class="cash-alias">RIOH.BURGERS</span>
-                                    </div>
-                                    <button type="submit" class="pay-btn-cash" id="pay-button-cash">
-                                        <i data-lucide="check-circle"></i> CONFIRMAR PEDIDO
+                                    <button type="button" class="pay-btn-transferencia" id="pay-btn-transferencia" onclick="submitOrder('transferencia')">
+                                        🔄 TRANSFERENCIA
                                     </button>
                                 </div>
 
