@@ -2833,3 +2833,36 @@ footer {
     text-decoration: underline;
     padding: 0;
 }
+
+/* ADDED-TO-CART TOAST */
+.added-toast {
+    position: fixed;
+    bottom: 5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text-dark);
+    color: white;
+    border: 3px solid var(--text-dark);
+    box-shadow: 4px 4px 0 var(--primary);
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    white-space: nowrap;
+}
+
+.added-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.added-toast i { width: 16px; height: 16px; color: #4ade80; flex-shrink: 0; }
+.added-toast .toast-name { color: #FFD600; }
+.added-toast .toast-sub { color: #ccc; font-family: var(--font-body); font-size: 0.8rem; }

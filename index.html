@@ -275,8 +275,8 @@
                     <span id="bar-items-count">0 ITEMS</span>
                     <span class="bar-total" id="bar-total-price">$0</span>
                 </div>
-                <button class="cart-btn" onclick="openCheckoutModal()">CONTINUAR PEDIDO <i
-                        data-lucide="chevron-right"></i></button>
+                <button class="cart-btn" onclick="toggleCartModal()">VER PEDIDO <i
+                        data-lucide="shopping-bag"></i></button>
             </div>
         </div>
 
@@ -443,7 +443,7 @@
                         <span>TOTAL</span>
                         <span id="cart-final-total">$0</span>
                     </div>
-                    <button class="checkout-now-btn" onclick="openCheckoutModal(); toggleCartModal();">
+                    <button class="checkout-now-btn" onclick="showUpsellModal(); toggleCartModal();">
                         INICIAR COMPRA <i data-lucide="arrow-right"></i>
                     </button>
                 </div>
@@ -526,6 +526,13 @@
                 <p id="alert-message">Mensaje de prueba</p>
                 <button class="btn-alert" onclick="closeAlertModal()">ENTENDIDO</button>
             </div>
+        </div>
+
+        <!-- Added-to-cart toast -->
+        <div id="added-toast" class="added-toast">
+            <i data-lucide="check-circle"></i>
+            <span class="toast-name"></span>
+            <span class="toast-sub">agregado al carrito</span>
         </div>
 
         <script src="main.js"></script>
